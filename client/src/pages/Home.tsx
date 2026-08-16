@@ -89,12 +89,11 @@ export default function Home() {
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-4 lg:px-10">
           <div className="flex items-center gap-3">
             <div className="relative grid h-10 w-10 place-items-center rounded-[13px] bg-[#102333] shadow-[4px_4px_0_#e6a24a]">
-              <Play className="h-4 w-4 fill-[#f7f3ed] text-[#f7f3ed]" />
-              <span className="absolute bottom-[7px] right-[7px] h-1.5 w-1.5 rounded-full bg-[#e6a24a]" />
+              <img src="/manus-storage/cueframe-logo_e1c0252f.png" alt="Cueframe logo" className="h-full w-full rounded-[13px] object-cover" />
             </div>
             <div>
-              <div className="font-display text-[20px] font-semibold tracking-[-0.04em]">Video Context</div>
-              <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#102333]/55">Transcript first / vision on request</div>
+              <div className="font-display text-[20px] font-semibold tracking-[-0.04em]">Cueframe</div>
+              <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#102333]/55">Cue the moment / skip the compute</div>
             </div>
           </div>
           <div className="hidden items-center gap-6 text-[12px] font-medium text-[#102333]/60 md:flex">
@@ -160,7 +159,7 @@ export default function Home() {
 
         {showTools && <section className="mt-8 rounded-[20px] border border-[#102333]/12 bg-[#102333] p-6 text-[#f7f3ed] shadow-[5px_5px_0_#d9cfbf]"><div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"><div><div className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#e6a24a]">ai tool contract</div><h3 className="mt-2 font-display text-[25px] tracking-[-0.04em]">Three small calls, one clear job.</h3></div><button onClick={() => setShowTools(false)} className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/45 hover:text-white">close</button></div><div className="mt-5 grid gap-3 md:grid-cols-3">{[{ name: "get_video_context", desc: "Find timestamped transcript passages." }, { name: "inspect_video_timestamp", desc: "Inspect a requested visual moment." }, { name: "get_video_timeline", desc: "Return a compact topic outline." }].map((tool) => <div key={tool.name} className="rounded-xl border border-white/10 bg-white/[0.05] p-4"><div className="font-mono text-[11px] text-[#e6a24a]">{tool.name}</div><p className="mt-2 text-[12px] leading-5 text-white/55">{tool.desc}</p></div>)}</div></section>}
       </main>
-      <footer className="border-t border-[#102333]/10 px-5 py-6 lg:px-10"><div className="mx-auto flex max-w-[1440px] flex-col gap-2 text-[11px] text-[#102333]/45 sm:flex-row sm:items-center sm:justify-between"><span>Video Context is an open product experiment for lower-compute AI video conversations.</span><span className="font-mono uppercase tracking-[0.13em]">text first / vision on request</span></div></footer>
+      <footer className="border-t border-[#102333]/10 px-5 py-6 lg:px-10"><div className="mx-auto flex max-w-[1440px] flex-col gap-2 text-[11px] text-[#102333]/45 sm:flex-row sm:items-center sm:justify-between"><span>Cueframe is an open product experiment for lower-compute AI video conversations.</span><span className="font-mono uppercase tracking-[0.13em]">text first / vision on request</span></div></footer>
     </div>
   );
 }
