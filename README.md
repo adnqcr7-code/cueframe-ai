@@ -1,8 +1,8 @@
-# Video Context
+# Cueframe
 
 > Transcript first. Vision on request.
 
-Video Context is an open product experiment for lower-compute AI conversations about YouTube videos. It turns the spoken layer into timestamped, searchable context and reserves visual inspection for explicit moments such as “look at 10 seconds” or “what is on screen at 1:20?”
+Cueframe is an open product experiment for lower-compute AI conversations about YouTube videos. It turns the spoken layer into timestamped, searchable context and reserves visual inspection for explicit moments such as “look at 10 seconds” or “what is on screen at 1:20?”
 
 ## What is working in this prototype
 
