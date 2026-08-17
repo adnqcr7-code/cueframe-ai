@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { trpc } from "@/lib/trpc";
 import {
   ArrowUpRight,
   BookOpen,
@@ -51,17 +52,27 @@ function formatTime(seconds: number) {
 
 export default function Home() {
   const [url, setUrl] = useState("https://www.youtube.com/watch?v=M7lc1UVf-VE");
+  const [requestedUrl, setRequestedUrl] = useState("");
   const [videoId, setVideoId] = useState("M7lc1UVf-VE");
   const [query, setQuery] = useState("");
   const [activeSeconds, setActiveSeconds] = useState(80);
-  const [isLoading, setIsLoading] = useState(false);
   const [inspectionMode, setInspectionMode] = useState(false);
   const [showTools, setShowTools] = useState(false);
+  const transcriptQuery = trpc.video.getTranscript.useQuery({ url: requestedUrl, language: "en", bypassCache: false }, { enabled: Boolean(requestedUrl), retry: false });
+  const liveTranscript = useMemo<TranscriptLine[]>(() => {
+    if (!transcriptQuery.data?.segments?.length) return transcript;
+    return transcriptQuery.data.segments.map((segment) => ({
+      time: formatTime(segment.startMs / 1000),
+      seconds: Math.round(segment.startMs / 1000),
+      text: segment.text,
+      tag: "live-caption",
+    }));
+  }, [transcriptQuery.data]);
 
   const filteredTranscript = useMemo(() => {
-    if (!query.trim()) return transcript;
-    return transcript.filter((line) => `${line.text} ${line.tag}`.toLowerCase().includes(query.toLowerCase()));
-  }, [query]);
+    if (!query.trim()) return liveTranscript;
+    return liveTranscript.filter((line) => `${line.text} ${line.tag}`.toLowerCase().includes(query.toLowerCase()));
+  }, [query, liveTranscript]);
 
   const jumpTo = (seconds: number) => {
     setActiveSeconds(seconds);
@@ -70,12 +81,12 @@ export default function Home() {
   };
 
   const loadVideo = () => {
-    setIsLoading(true);
-    window.setTimeout(() => {
+    try {
       setVideoId(extractVideoId(url));
-      setIsLoading(false);
-      toast.success("Video workspace ready", { description: "Demo transcript loaded with timestamp anchors." });
-    }, 550);
+      setRequestedUrl(url);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Enter a valid YouTube URL.");
+    }
   };
 
   const inspectMoment = () => {
@@ -89,11 +100,11 @@ export default function Home() {
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-4 lg:px-10">
           <div className="flex items-center gap-3">
             <div className="relative grid h-10 w-10 place-items-center rounded-[13px] bg-[#102333] shadow-[4px_4px_0_#e6a24a]">
-              <img src="/manus-storage/cueframe-logo_e1c0252f.png" alt="Cueframe logo" className="h-full w-full rounded-[13px] object-cover" />
+              <img src="/manus-storage/onoma-logo_97f0af62.png" alt="Onoma logo" className="h-full w-full rounded-[13px] object-cover" />
             </div>
             <div>
-              <div className="font-display text-[20px] font-semibold tracking-[-0.04em]">Cueframe</div>
-              <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#102333]/55">Cue the moment / skip the compute</div>
+              <div className="font-display text-[20px] font-semibold tracking-[-0.04em]">Onoma</div>
+              <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#102333]/55">Name the moment / keep the context</div>
             </div>
           </div>
           <div className="hidden items-center gap-6 text-[12px] font-medium text-[#102333]/60 md:flex">
@@ -118,15 +129,15 @@ export default function Home() {
                 <Link2 className="h-4 w-4 shrink-0 text-[#e6a24a]" />
                 <input aria-label="YouTube URL" value={url} onChange={(event) => setUrl(event.target.value)} className="min-w-0 flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-white/35" placeholder="Paste a YouTube URL" />
               </div>
-              <button onClick={loadVideo} className="inline-flex h-[50px] items-center justify-center gap-2 rounded-xl bg-[#e6a24a] px-5 text-[13px] font-semibold text-[#102333] transition-transform hover:-translate-y-0.5 active:scale-[0.97]">{isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />} Load context</button>
+              <button onClick={loadVideo} className="inline-flex h-[50px] items-center justify-center gap-2 rounded-xl bg-[#e6a24a] px-5 text-[13px] font-semibold text-[#102333] transition-transform hover:-translate-y-0.5 active:scale-[0.97]">{transcriptQuery.isFetching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />} {transcriptQuery.isFetching ? "Fetching transcript" : "Load context"}</button>
             </div>
             <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[10px] uppercase tracking-[0.13em] text-white/40"><span className="flex items-center gap-1.5"><Check className="h-3 w-3 text-[#77a878]" /> timestamped transcript</span><span className="flex items-center gap-1.5"><Check className="h-3 w-3 text-[#77a878]" /> visual calls on demand</span></div>
           </div>
           <div className="relative hidden min-h-[300px] lg:block">
             <div className="absolute right-[-16%] top-1/2 h-[360px] w-[620px] -translate-y-1/2 rotate-[-8deg] rounded-[24px] border border-white/10 bg-[#19364b] p-5 shadow-2xl">
-              <div className="mb-4 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.15em] text-white/45"><span>video_context / 01</span><span className="text-[#e6a24a]">live index</span></div>
-              <div className="relative h-[210px] overflow-hidden rounded-[12px] bg-[#0d202f]"><img src="/manus-storage/context-hero_df102b2f.jpg" alt="Abstract timeline and transcript illustration" className="h-full w-full object-cover opacity-60" /><div className="absolute inset-x-7 bottom-9 h-px bg-[#e6a24a]/70" /><span className="absolute bottom-[29px] left-[38%] h-3 w-3 rounded-full border-2 border-[#102333] bg-[#e6a24a] shadow-[0_0_0_5px_#e6a24a33]" /></div>
-              <div className="mt-4 flex items-center justify-between text-[11px] text-white/55"><span>07 transcript windows</span><span className="text-[#e6a24a]">01 visual request</span></div>
+              <div className="mb-4 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.15em] text-white/45"><span>onoma / transcript index</span><span className="text-[#e6a24a]">live index</span></div>
+              <div className="relative h-[210px] overflow-hidden rounded-[12px] bg-[#0d202f]"><img src="/manus-storage/onoma-banner_fd704450.jpg" alt="Onoma transcript timeline banner" className="h-full w-full object-cover opacity-60" /><div className="absolute inset-x-7 bottom-9 h-px bg-[#e6a24a]/70" /><span className="absolute bottom-[29px] left-[38%] h-3 w-3 rounded-full border-2 border-[#102333] bg-[#e6a24a] shadow-[0_0_0_5px_#e6a24a33]" /></div>
+              <div className="mt-4 flex items-center justify-between text-[11px] text-white/55"><span>live transcript cache</span><span className="text-[#e6a24a]">vision later</span></div>
             </div>
           </div>
         </section>
@@ -139,8 +150,9 @@ export default function Home() {
           </div>
 
           <div className="min-w-0">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><div className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#ba7624]">02 / the spoken layer</div><h2 className="mt-2 font-display text-[29px] tracking-[-0.04em]">Search the transcript.</h2></div><div className="flex items-center gap-2 rounded-full bg-[#e6a24a]/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[#9b5f1b]"><FileText className="h-3 w-3" /> demo captions / en</div></div>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><div className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#ba7624]">02 / the spoken layer</div><h2 className="mt-2 font-display text-[29px] tracking-[-0.04em]">Search the transcript.</h2></div><div className="flex items-center gap-2 rounded-full bg-[#e6a24a]/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[#9b5f1b]"><FileText className="h-3 w-3" /> {transcriptQuery.isFetching ? "fetching / en" : transcriptQuery.data?.status === "ready" ? `${transcriptQuery.data.cacheState} / ${transcriptQuery.data.language}` : "demo captions / en"}</div></div>
             <div className="mt-5 flex items-center gap-3 rounded-xl border border-[#102333]/10 bg-white/65 px-4 py-3 focus-within:border-[#ba7624]/60"><Search className="h-4 w-4 text-[#102333]/45" /><input aria-label="Search transcript" value={query} onChange={(event) => setQuery(event.target.value)} className="w-full bg-transparent text-[13px] outline-none placeholder:text-[#102333]/35" placeholder="Ask the transcript a question or search a phrase…" /><kbd className="hidden rounded border border-[#102333]/10 bg-[#f2eee7] px-1.5 py-0.5 font-mono text-[9px] text-[#102333]/45 sm:block">⌘ K</kbd></div>
+            {transcriptQuery.data?.status !== "ready" && transcriptQuery.data?.message && <div className="mt-4 rounded-xl border border-[#ba7624]/25 bg-[#fff8ed] px-4 py-3 text-[12px] leading-5 text-[#8b571b]">Live captions are unavailable for this video right now. The demo transcript remains visible so you can still explore the workspace.</div>}
             <div className="mt-4 overflow-hidden rounded-[20px] border border-[#102333]/10 bg-[#f7f3ed]">
               <div className="flex items-center justify-between border-b border-[#102333]/10 px-5 py-3 font-mono text-[10px] uppercase tracking-[0.15em] text-[#102333]/45"><span>{filteredTranscript.length} transcript windows</span><span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#77a878]" /> searchable</span></div>
               <div className="divide-y divide-[#102333]/8">
@@ -159,7 +171,7 @@ export default function Home() {
 
         {showTools && <section className="mt-8 rounded-[20px] border border-[#102333]/12 bg-[#102333] p-6 text-[#f7f3ed] shadow-[5px_5px_0_#d9cfbf]"><div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"><div><div className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#e6a24a]">ai tool contract</div><h3 className="mt-2 font-display text-[25px] tracking-[-0.04em]">Three small calls, one clear job.</h3></div><button onClick={() => setShowTools(false)} className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/45 hover:text-white">close</button></div><div className="mt-5 grid gap-3 md:grid-cols-3">{[{ name: "get_video_context", desc: "Find timestamped transcript passages." }, { name: "inspect_video_timestamp", desc: "Inspect a requested visual moment." }, { name: "get_video_timeline", desc: "Return a compact topic outline." }].map((tool) => <div key={tool.name} className="rounded-xl border border-white/10 bg-white/[0.05] p-4"><div className="font-mono text-[11px] text-[#e6a24a]">{tool.name}</div><p className="mt-2 text-[12px] leading-5 text-white/55">{tool.desc}</p></div>)}</div></section>}
       </main>
-      <footer className="border-t border-[#102333]/10 px-5 py-6 lg:px-10"><div className="mx-auto flex max-w-[1440px] flex-col gap-2 text-[11px] text-[#102333]/45 sm:flex-row sm:items-center sm:justify-between"><span>Cueframe is an open product experiment for lower-compute AI video conversations.</span><span className="font-mono uppercase tracking-[0.13em]">text first / vision on request</span></div></footer>
+      <footer className="border-t border-[#102333]/10 px-5 py-6 lg:px-10"><div className="mx-auto flex max-w-[1440px] flex-col gap-2 text-[11px] text-[#102333]/45 sm:flex-row sm:items-center sm:justify-between"><span>Onoma is an open product experiment for live, lower-compute video context.</span><span className="font-mono uppercase tracking-[0.13em]">text first / vision on request</span></div></footer>
     </div>
   );
 }
