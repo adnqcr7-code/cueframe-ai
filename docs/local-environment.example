@@ -1,0 +1,17 @@
+# Onoma local development environment
+# Copy these values into a local .env file before running `pnpm setup`.
+
+NODE_ENV=development
+DATABASE_URL=mysql://onoma:onoma@127.0.0.1:3306/onoma
+JWT_SECRET=replace-this-with-a-long-local-only-secret
+
+# Authentication is optional for the public transcript workspace.
+VITE_APP_ID=
+OAUTH_SERVER_URL=
+VITE_OAUTH_PORTAL_URL=
+OWNER_OPEN_ID=
+OWNER_NAME=Local Developer
+
+# Optional built-in integrations. AI is intentionally not used in this milestone.
+BUILT_IN_FORGE_API_URL=
+BUILT_IN_FORGE_API_KEY=
