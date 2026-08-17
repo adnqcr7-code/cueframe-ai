@@ -1,6 +1,10 @@
 # Onoma
 
-> Live transcript first. Keep the context.
+![Onoma banner](branding/onoma-banner.jpg)
+
+> **Live transcript first. Keep the context.**
+>
+> Onoma turns YouTube’s spoken layer into searchable, timestamped context before any heavier video processing is needed.
 
 Onoma is an open product experiment for lower-compute AI conversations about YouTube videos. It turns the spoken layer into timestamped, searchable context and reserves visual inspection for explicit moments such as “look at 10 seconds” or “what is on screen at 1:20?”
 
