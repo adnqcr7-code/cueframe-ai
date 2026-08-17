@@ -37,7 +37,7 @@ Node.js can be installed from [nodejs.org](https://nodejs.org/), pnpm instructio
 
 The setup command is intentionally transparent. This repository uses [`docs/local-environment.example`](docs/local-environment.example) as its supported environment template; when no local `.env` exists, setup copies that reference into `.env`, generates a random development-only JWT secret, starts the `db` service from [`docker-compose.yml`](docker-compose.yml), waits for MySQL health, applies the migration, and prints the local URL.
 
-The generated `.env` is ignored by Git and should never be committed. Authentication variables are optional for exploring the public transcript workspace. The transcript provider only needs the local database and network access to YouTube captions.
+The generated `.env` is ignored by Git and should never be committed. Authentication variables are optional for exploring the public transcript workspace. The transcript provider only needs the local database and network access to YouTube captions. If MySQL is already running outside Docker, set `ONOMA_SKIP_DOCKER=1` and provide a reachable `DATABASE_URL` before running `pnpm setup`.
 
 ## Daily development commands
 
@@ -78,7 +78,7 @@ Do not edit an already-applied migration. Create a new migration for each schema
 
 If `pnpm setup` says Docker Compose is missing, install Docker Desktop, make sure it is running, and run the command again. If port `3306` is already occupied, stop the other MySQL service or change the published port in `docker-compose.yml` and update `DATABASE_URL` in `.env`.
 
-If the app starts but a video reports unavailable captions, try another public video or a different language. Some videos have captions disabled, restricted, or unavailable to automated clients; this is a provider limitation rather than a frontend failure.
+If the app starts but a video reports unavailable captions, try another public video or a different language. If `pnpm setup` fails while using an existing database, confirm that the database is reachable and that the configured migration history matches this checkout; a fresh local database is the simplest path. Some videos have captions disabled, restricted, or unavailable to automated clients; this is a provider limitation rather than a frontend failure.
 
 If the schema and database drift, stop the app, confirm that the local MySQL container is running with `pnpm db:start`, and run `pnpm db:migrate`. Avoid deleting the Docker volume unless you intentionally want to discard local data.
 
