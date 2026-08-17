@@ -63,7 +63,7 @@ export async function getTranscript(input: string, language = "en", bypassCache 
     const cached = await db.select().from(videos).where(and(eq(videos.videoId, videoId), eq(videos.language, language))).limit(1);
     const video = cached[0];
     if (video?.transcriptStatus === "ready" && video.expiresAt && video.expiresAt > now) {
-      const rows = await db.select({ segmentIndex: transcriptSegments.segmentIndex, startMs: transcriptSegments.startMs, endMs: transcriptSegments.endMs, text: transcriptSegments.text }).from(transcriptSegments).where(eq(transcriptSegments.videoId, videoId)).limit(5000);
+      const rows = await db.select({ segmentIndex: transcriptSegments.segmentIndex, startMs: transcriptSegments.startMs, endMs: transcriptSegments.endMs, text: transcriptSegments.text }).from(transcriptSegments).where(and(eq(transcriptSegments.videoId, videoId), eq(transcriptSegments.language, language))).limit(5000);
       return {
         videoId,
         sourceUrl,
@@ -86,8 +86,8 @@ export async function getTranscript(input: string, language = "en", bypassCache 
 
     if (db) {
       await db.insert(videos).values({ videoId, sourceUrl, language, transcriptStatus: "ready", transcriptSource: "youtube_caption", fetchedAt, expiresAt, lastError: null }).onDuplicateKeyUpdate({ set: { sourceUrl, transcriptStatus: "ready", transcriptSource: "youtube_caption", fetchedAt, expiresAt, lastError: null } });
-      await db.delete(transcriptSegments).where(eq(transcriptSegments.videoId, videoId));
-      if (segments.length > 0) await db.insert(transcriptSegments).values(segments.map((segment) => ({ videoId, ...segment })));
+      await db.delete(transcriptSegments).where(and(eq(transcriptSegments.videoId, videoId), eq(transcriptSegments.language, language)));
+      if (segments.length > 0) await db.insert(transcriptSegments).values(segments.map((segment) => ({ videoId, language, ...segment })));
     }
 
     return { videoId, sourceUrl, language, status: "ready", cacheState: bypassCache ? "bypass" : "miss", transcriptSource: "youtube_caption", fetchedAt: fetchedAt.toISOString(), expiresAt: expiresAt.toISOString(), segments };
