@@ -35,7 +35,7 @@ Node.js can be installed from [nodejs.org](https://nodejs.org/), pnpm instructio
 
 ## What the setup command does
 
-The setup command is intentionally transparent. It creates `.env` from [`docs/local-environment.example`](docs/local-environment.example) if no local environment file exists, generates a random development-only JWT secret, starts the `db` service from [`docker-compose.yml`](docker-compose.yml), waits for the migration command to complete, and prints the local URL.
+The setup command is intentionally transparent. This repository uses [`docs/local-environment.example`](docs/local-environment.example) as its supported environment template; when no local `.env` exists, setup copies that reference into `.env`, generates a random development-only JWT secret, starts the `db` service from [`docker-compose.yml`](docker-compose.yml), waits for MySQL health, applies the migration, and prints the local URL.
 
 The generated `.env` is ignored by Git and should never be committed. Authentication variables are optional for exploring the public transcript workspace. The transcript provider only needs the local database and network access to YouTube captions.
 
