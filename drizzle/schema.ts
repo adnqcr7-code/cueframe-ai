@@ -30,21 +30,22 @@ export const videos = mysqlTable("videos", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
-  videoIdUnique: uniqueIndex("videos_video_id_unique").on(table.videoId),
+  videoLanguageUnique: uniqueIndex("videos_video_language_unique").on(table.videoId, table.language),
   expiresIndex: index("videos_expires_idx").on(table.expiresAt),
 }));
 
 export const transcriptSegments = mysqlTable("transcriptSegments", {
   id: int("id").autoincrement().primaryKey(),
   videoId: varchar("videoId", { length: 32 }).notNull(),
+  language: varchar("language", { length: 16 }).notNull().default("en"),
   segmentIndex: int("segmentIndex").notNull(),
   startMs: int("startMs").notNull(),
   endMs: int("endMs").notNull(),
   text: text("text").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => ({
-  videoIndex: index("transcript_segments_video_idx").on(table.videoId),
-  segmentUnique: uniqueIndex("transcript_segments_video_index_unique").on(table.videoId, table.segmentIndex),
+  videoLanguageIndex: index("transcript_segments_video_language_idx").on(table.videoId, table.language),
+  segmentUnique: uniqueIndex("transcript_segments_video_language_index_unique").on(table.videoId, table.language, table.segmentIndex),
 }));
 
 export type Video = typeof videos.$inferSelect;
