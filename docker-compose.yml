@@ -1,0 +1,21 @@
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: onoma
+      MYSQL_USER: onoma
+      MYSQL_PASSWORD: onoma
+      MYSQL_ROOT_PASSWORD: onoma-root
+    ports:
+      - "3306:3306"
+    volumes:
+      - onoma_mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uonoma", "-ponoma"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  onoma_mysql:
