@@ -41,18 +41,26 @@ async function main() {
     console.log("Using existing .env.");
   }
 
-  try {
-    output("docker", ["compose", "version"]);
-  } catch {
-    console.error("Docker Compose is required for the default setup. Install Docker Desktop, start it, and run `pnpm setup` again.");
-    process.exit(1);
+  const useExistingDatabase = process.env.ONOMA_SKIP_DOCKER === "1";
+  if (!useExistingDatabase) {
+    try {
+      output("docker", ["compose", "version"]);
+    } catch {
+      console.error("Docker Compose is required for the default setup. Install Docker Desktop, start it, and run `pnpm setup` again.");
+      console.error("If you already have MySQL running, set ONOMA_SKIP_DOCKER=1 and provide DATABASE_URL.");
+      process.exit(1);
+    }
   }
 
   try {
-    console.log("Starting the local MySQL database...");
-    run("docker", ["compose", "up", "-d", "db"]);
-    console.log("Waiting for MySQL to become healthy...");
-    await waitForDatabase();
+    if (useExistingDatabase) {
+      console.log("Using the existing DATABASE_URL; Docker startup skipped.");
+    } else {
+      console.log("Starting the local MySQL database...");
+      run("docker", ["compose", "up", "-d", "db"]);
+      console.log("Waiting for MySQL to become healthy...");
+      await waitForDatabase();
+    }
     console.log("\nApplying the database schema...");
     run("pnpm", ["db:migrate"]);
   } catch (error) {
