@@ -1,4 +1,4 @@
-# Cueframe — Design Direction
+# Onoma — Design Direction
 
 ## Three possible directions
 
@@ -56,7 +56,7 @@ Example lines:
 - “Transcript first. Vision on request.”
 
 ### Wordmark & Logo
-A compact Cueframe glyph combining a play triangle, transcript bracket, and one timestamp tick. The wordmark is set in a high-contrast editorial serif with a small amber signal bar under “Context.”
+A compact Onoma glyph combining a play triangle, transcript bracket, and one timestamp tick. The wordmark is set in a high-contrast editorial serif with a small amber signal bar under “Onoma.”
 
 ### Signature Brand Color
 Signal Amber: `#E6A24A`.
