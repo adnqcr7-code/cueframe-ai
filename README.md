@@ -1,18 +1,18 @@
-# Cueframe
+# Onoma
 
-> Transcript first. Vision on request.
+> Live transcript first. Keep the context.
 
-Cueframe is an open product experiment for lower-compute AI conversations about YouTube videos. It turns the spoken layer into timestamped, searchable context and reserves visual inspection for explicit moments such as “look at 10 seconds” or “what is on screen at 1:20?”
+Onoma is an open product experiment for lower-compute AI conversations about YouTube videos. It turns the spoken layer into timestamped, searchable context and reserves visual inspection for explicit moments such as “look at 10 seconds” or “what is on screen at 1:20?”
 
 ## What is working in this prototype
 
-The public frontend currently includes a transcript-first workspace with a YouTube URL loader, embedded player, clickable transcript windows, timestamp seeking, transcript search, an explicit “Inspect moment” action, and a visible AI tool contract panel.
+The public frontend includes a transcript-first workspace with a YouTube URL loader, embedded player, clickable transcript windows, timestamp seeking, transcript search, and live backend transcript loading with cache-state feedback.
 
-The transcript shown in the current prototype is demo data so the interface can be explored without configuring an API key. Live caption retrieval, exact server-side frame extraction, and model invocation are intentionally deferred and clearly labeled in the UI.
+Onoma now retrieves timestamped YouTube captions server-side and caches normalized segments for 24 hours. If a video has no accessible captions, the UI keeps the demo transcript visible and explains the limitation. AI model invocation and visual frame inspection are intentionally deferred for now.
 
-## AI tool shape
+## Future AI boundary
 
-The intended integration exposes three small tools:
+The future AI integration can expose three small tools, but they are not connected in this milestone:
 
 - `get_video_context`: return relevant timestamped transcript passages.
 - `inspect_video_timestamp`: inspect visual evidence near an explicit timestamp.
