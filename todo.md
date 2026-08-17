@@ -11,3 +11,11 @@
 
 - [x] Fix transcript cache keying so video ID and language remain isolated.
 - [x] Run narrow mobile verification after the Onoma rebrand and live transcript integration.
+
+- [x] Add the Onoma banner and improved visual opening section to the public README.
+
+- [ ] Add a beginner-friendly setup contract and prerequisites table.
+- [ ] Add .env.example and safe local configuration guidance.
+- [ ] Add one-command setup, database migration, dev, test, and verification scripts.
+- [ ] Rewrite README onboarding and troubleshooting sections.
+- [ ] Verify the clean setup flow and publish the onboarding update.
