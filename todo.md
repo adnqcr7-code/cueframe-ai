@@ -14,8 +14,12 @@
 
 - [x] Add the Onoma banner and improved visual opening section to the public README.
 
-- [ ] Add a beginner-friendly setup contract and prerequisites table.
-- [ ] Add .env.example and safe local configuration guidance.
-- [ ] Add one-command setup, database migration, dev, test, and verification scripts.
-- [ ] Rewrite README onboarding and troubleshooting sections.
-- [ ] Verify the clean setup flow and publish the onboarding update.
+- [x] Add a beginner-friendly setup contract and prerequisites table.
+- [x] Add .env.example and safe local configuration guidance.
+- [x] Add one-command setup, database migration, dev, test, and verification scripts.
+- [x] Rewrite README onboarding and troubleshooting sections.
+- [x] Verify the clean setup flow and publish the onboarding update.
+
+- [ ] Make setup wait for MySQL health before running migrations and report failures clearly.
+- [ ] Run the beginner setup flow end-to-end in a clean local-style environment.
+- [ ] Clarify in the README that docs/local-environment.example is the supported environment template.
